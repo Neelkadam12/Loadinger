@@ -1,0 +1,117 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create the main GUI frame
+local screenGui = Instance.new("ScreenGui")
+screenGui.ResetOnSpawn = false -- Prevent GUI from disappearing after character reset
+screenGui.Parent = playerGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0.3, 0, 0.2, 0)
+mainFrame.Position = UDim2.new(0.35, 0, 0.4, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+-- Add smooth corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0.1, 0)
+corner.Parent = mainFrame
+
+-- Loading text
+local loadingLabel = Instance.new("TextLabel")
+loadingLabel.Size = UDim2.new(1, 0, 0.4, 0)
+loadingLabel.Position = UDim2.new(0, 0, 0.1, 0)
+loadingLabel.BackgroundTransparency = 1
+loadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingLabel.TextScaled = true
+loadingLabel.Font = Enum.Font.SourceSans
+loadingLabel.Text = "Loading..."
+loadingLabel.Parent = mainFrame
+
+-- Loading bar
+local loadingBarBackground = Instance.new("Frame")
+loadingBarBackground.Size = UDim2.new(0.8, 0, 0.1, 0)
+loadingBarBackground.Position = UDim2.new(0.1, 0, 0.6, 0)
+loadingBarBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+loadingBarBackground.BorderSizePixel = 0
+loadingBarBackground.Parent = mainFrame
+
+local loadingBar = Instance.new("Frame")
+loadingBar.Size = UDim2.new(0, 0, 1, 0)
+loadingBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+loadingBar.BorderSizePixel = 0
+loadingBar.Parent = loadingBarBackground
+
+-- Add smooth corners to the bar
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(0.5, 0)
+barCorner.Parent = loadingBar
+
+-- Rotating messages
+local messageLabel = Instance.new("TextLabel")
+messageLabel.Size = UDim2.new(1, 0, 0.2, 0)
+messageLabel.Position = UDim2.new(0, 0, 0.75, 0)
+messageLabel.BackgroundTransparency = 1
+messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+messageLabel.TextScaled = true
+messageLabel.Font = Enum.Font.SourceSans
+messageLabel.Text = "Thanks for using our script"
+messageLabel.Parent = mainFrame
+
+-- Animation and destruction logic
+local messages = {
+    "Thanks for using our script",
+    "Script is loading, please wait 3 minutes",
+    "Setting up the Duping script for you <3"
+}
+local messageIndex = 1
+local elapsedTime = 0
+local totalDuration = 180 -- 3 minutes in seconds
+
+spawn(function()
+    while elapsedTime < totalDuration do
+        -- Cycle through loading text animation
+        for _, text in ipairs({"Loading...", "Loading..", "Loading.", "Loading"}) do
+            loadingLabel.Text = text
+            wait(0.5)
+        end
+
+        -- Update loading bar
+        loadingBar.Size = UDim2.new(elapsedTime / totalDuration, 0, 1, 0)
+
+        -- Update message text
+        messageLabel.Text = messages[messageIndex]
+        messageIndex = messageIndex % #messages + 1
+        wait(1.5) -- Delay for message cycling
+
+        elapsedTime = elapsedTime + 1.5
+    end
+
+    -- After 3 minutes, replace GUI with new message
+    mainFrame:Destroy()
+
+    local newFrame = Instance.new("Frame")
+    newFrame.Size = UDim2.new(0.3, 0, 0.2, 0)
+    newFrame.Position = UDim2.new(0.35, 0, 0.4, 0)
+    newFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    newFrame.BorderSizePixel = 0
+    newFrame.Parent = screenGui
+
+    local newCorner = Instance.new("UICorner")
+    newCorner.CornerRadius = UDim.new(0.1, 0)
+    newCorner.Parent = newFrame
+
+    local newLabel = Instance.new("TextLabel")
+    newLabel.Size = UDim2.new(1, 0, 1, 0)
+    newLabel.BackgroundTransparency = 1
+    newLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    newLabel.TextScaled = true
+    newLabel.Font = Enum.Font.SourceSans
+    newLabel.Text = "Please join a different server, this server is not suitable for duping. Sorry!"
+    newLabel.Parent = newFrame
+
+    wait(5) -- Wait 5 seconds before closing
+    screenGui:Destroy()
+end)
